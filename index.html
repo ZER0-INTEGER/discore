@@ -42,16 +42,6 @@
   input = $('input'),
   channel = params.get('server')
   
-  pubnub.fetchMessages(
-    {
-      channels: [channel],
-      end: '15343325004275466',
-      count: 20
-    },
-    (status, response) => {
-      sendMessage(response.messages[0])
-    }
-  );
   
   pubnub.addListener({
     message: function(obj) {
