@@ -1,8 +1,37 @@
-<body>
-  <h1>Hello, Discore!</h1>
-  <style>
-    body{
-      font-family:arial;
-    }
-  </style>
-</body>
+Enter Chat and press enter
+<div><input id=input placeholder="message" /></div>
+
+Chat Output
+<div id=box></div>
+
+<script src=https://cdn.pubnub.com/sdk/javascript/pubnub.4.28.2.min.js></script>
+<script> (function() {
+        var pubnub = new PubNub({
+            publishKey: 'pub-c-6fc0378e-25c7-437c-b1d0-85847d6354b4',
+            subscribeKey: 'sub-c-809b1b37-8c2c-4e7f-b776-105d498f14c8'
+        });
+        function $(id) {
+            return document.getElementById(id);
+        }
+        var box = $('box'),
+            input = $('input'),
+            channel = '10chat-demo';
+        pubnub.addListener({
+            message: function(obj) {
+                box.innerHTML = ('' + obj.message).replace(/[<>]/g, '') + '<br>' + box.innerHTML
+            }
+        });
+        pubnub.subscribe({
+            channels: [channel]
+        });
+        input.addEventListener('keyup', function(e) {
+            if ((e.keyCode || e.charCode) === 13) {
+                pubnub.publish({
+                    channel: channel,
+                    message: input.value,
+                    x: (input.value = '')
+                });
+            }
+        });
+    })();
+</script>
