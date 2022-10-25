@@ -1,37 +1,110 @@
-Enter Chat and press enter
-<div><input id=input placeholder="message" /></div>
-
-Chat Output
-<div id=box></div>
-
+<div id="sidebar">
+  <img src="https://static.vecteezy.com/system/resources/previews/006/892/625/original/discord-logo-icon-editorial-free-vector.jpg" server="home" onclick="goToServer(this.getAttribute('server'))">
+  <hr width="70%">
+  <div id="custom servers">
+    <img src="https://thisis-images.scdn.co/37i9dQZF1DZ06evNZYJn61-large.jpg" server="random" onclick="goToServer(this.getAttribute('server'))">
+  </div>
+  <hr width="70%">
+  <img src="https://www.freeiconspng.com/thumbs/add-icon-png/add-1-icon--flatastic-1-iconset--custom-icon-design-0.png">
+</div>
+<div id="main">
+  Enter Chat and press enter
+  <div><input id=input placeholder="message" /></div>
+  
+  Chat Output
+  <div id=box></div>
+</div>
 <script src=https://cdn.pubnub.com/sdk/javascript/pubnub.4.28.2.min.js></script>
 <script> (function() {
-        var pubnub = new PubNub({
-            publishKey: 'pub-c-6fc0378e-25c7-437c-b1d0-85847d6354b4',
-            subscribeKey: 'sub-c-809b1b37-8c2c-4e7f-b776-105d498f14c8'
-        });
-        function $(id) {
-            return document.getElementById(id);
-        }
-        var box = $('box'),
-            input = $('input'),
-            channel = '10chat-demo';
-        pubnub.addListener({
-            message: function(obj) {
-                box.innerHTML = ('' + obj.message).replace(/[<>]/g, '') + '<br>' + box.innerHTML
-            }
-        });
-        pubnub.subscribe({
-            channels: [channel]
-        });
-        input.addEventListener('keyup', function(e) {
-            if ((e.keyCode || e.charCode) === 13) {
-                pubnub.publish({
-                    channel: channel,
-                    message: input.value,
-                    x: (input.value = '')
-                });
-            }
-        });
-    })();
+  params=new URL(window.location).searchParams
+  
+  function $(id) {
+    return document.getElementById(id);
+  }
+  
+  function sendMessage(text){
+    box=$('box')
+    box.innerHTML = ('' + text).replace(/[<>]/g, '') + '<br>' + box.innerHTML
+  }
+  
+  var pubnub = new PubNub({
+    publishKey: 'pub-c-6fc0378e-25c7-437c-b1d0-85847d6354b4',
+    subscribeKey: 'sub-c-809b1b37-8c2c-4e7f-b776-105d498f14c8'
+  });
+  
+  
+  
+  var box = $('box'),
+  input = $('input'),
+  channel = params.get('server')
+  
+  pubnub.fetchMessages(
+    {
+      channels: ['10chat-demo'],
+      end: '15343325004275466',
+      count: 20
+    },
+    (status, response) => {
+      sendMessage(response.messages[0])
+    }
+  );
+  
+  pubnub.addListener({
+    message: function(obj) {
+      sendMessage(obj.message)
+    }
+  });
+  pubnub.subscribe({
+    channels: [channel]
+  });
+  input.addEventListener('keyup', function(e) {
+    if ((e.keyCode || e.charCode) === 13) {
+      pubnub.publish({
+        channel: channel,
+        message: input.value,
+        x: (input.value = '')
+      });
+    }
+  });
+})();
+url="https://discore.netlify.app"
+function goToServer(el){
+  window.location=url+"?server="+el
+}
 </script>
+<style>
+        body{
+          font-family:arial;
+        }
+        :root{
+          --sidebar:#202225;
+          --channels:#2f3136;
+        }
+        #sidebar{
+          background-color:var(--sidebar);
+          width:72px;
+          height:100%;
+          position:fixed;
+          left:0;
+          top:0;
+          z-index:10;
+        }
+        
+        #sidebar img{
+          width:60px;
+          height:60px;
+          border-radius:30px;
+          margin:6px;
+          transition:0.3s;
+        }
+        
+        #sidebar img:hover{
+          border-radius:15px;
+        }
+        
+        #main{
+          position:fixed;
+          left:75;
+          top:0;
+        }
+</style>
