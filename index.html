@@ -1,3 +1,7 @@
+<head>
+  <title>discore</title>
+</head>
+
 <div id="sidebar">
   <img src="https://static.vecteezy.com/system/resources/previews/006/892/625/original/discord-logo-icon-editorial-free-vector.jpg" server="home" onclick="goToServer(this.getAttribute('server'))">
   <hr width="70%">
@@ -40,7 +44,7 @@
   
   pubnub.fetchMessages(
     {
-      channels: ['10chat-demo'],
+      channels: [channel],
       end: '15343325004275466',
       count: 20
     },
@@ -67,7 +71,7 @@
     }
   });
 })();
-url="https://discore.netlify.app"
+url="file:///home/chronos/u-193b94573f18e9ccbe3a66bcd2ce34a91db2c0f3/MyFiles/Discore/index.html"
 function goToServer(el){
   window.location=url+"?server="+el
 }
